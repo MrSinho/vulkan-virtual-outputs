@@ -1,0 +1,22 @@
+-- The C compiler identification is GNU 10.2.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- SH_TEMPLATE_VERSION       : pre-release
+-- SH_TEMPLATE_ROOT_DIR      : /mnt/d/home/desktop/github/shtemplate
+-- SH_TEMPLATE_BINARIES_DIR  : /mnt/d/home/desktop/github/shtemplate/bin
+-- SH_TEMPLATE_BUILD_EXAMPLE : ON
+-- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /mnt/d/home/desktop/github/shtemplate/build/linux
+Scanning dependencies of target shtemplate
+[ 25%] Building C object CMakeFiles/shtemplate.dir/shtemplate/src/shtemplate.c.o
+[ 50%] Linking C static library ../../bin/linux/libshtemplate.a
+[ 50%] Built target shtemplate
+Scanning dependencies of target shtemplate-example
+[ 75%] Building C object CMakeFiles/shtemplate-example.dir/example/src/shtemplate-example.c.o
+[100%] Linking C executable ../../bin/linux/shtemplate-example
+[100%] Built target shtemplate-example

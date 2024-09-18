@@ -1,0 +1,28 @@
+Hit:1 http://deb.debian.org/debian bullseye InRelease
+Get:2 http://deb.debian.org/debian bullseye-updates InRelease [44.1 kB]
+Get:3 http://security.debian.org/debian-security bullseye-security InRelease [48.4 kB]
+Get:4 http://ftp.debian.org/debian bullseye-backports InRelease [49.0 kB]
+Get:5 http://deb.debian.org/debian bullseye-updates/main amd64 Packages.diff/Index [26.3 kB]
+Get:6 http://deb.debian.org/debian bullseye-updates/main Translation-en.diff/Index [11.7 kB]
+Get:7 http://deb.debian.org/debian bullseye-updates/main amd64 Packages T-2023-12-29-1403.39-F-2023-12-29-1403.39.pdiff [1,716 B]
+Get:7 http://deb.debian.org/debian bullseye-updates/main amd64 Packages T-2023-12-29-1403.39-F-2023-12-29-1403.39.pdiff [1,716 B]
+Get:8 http://security.debian.org/debian-security bullseye-security/main amd64 Packages [265 kB]
+Get:9 http://deb.debian.org/debian bullseye-updates/main Translation-en T-2023-12-29-1403.39-F-2023-12-29-1403.39.pdiff [839 B]
+Get:9 http://deb.debian.org/debian bullseye-updates/main Translation-en T-2023-12-29-1403.39-F-2023-12-29-1403.39.pdiff [839 B]
+Get:10 http://security.debian.org/debian-security bullseye-security/main Translation-en [171 kB]
+Get:11 http://ftp.debian.org/debian bullseye-backports/main amd64 Packages.diff/Index [63.3 kB]
+Get:12 http://ftp.debian.org/debian bullseye-backports/main amd64 Packages T-2024-01-03-2005.27-F-2024-01-03-2005.27.pdiff [1,741 B]
+Get:12 http://ftp.debian.org/debian bullseye-backports/main amd64 Packages T-2024-01-03-2005.27-F-2024-01-03-2005.27.pdiff [1,741 B]
+Fetched 683 kB in 1s (561 kB/s)
+Reading package lists...
+Building dependency tree...
+Reading state information...
+39 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+cmake is already the newest version (3.18.4-2+deb11u1).
+gcc is already the newest version (4:10.2.1-1).
+make is already the newest version (4.3-4.1).
+libc6-dev is already the newest version (2.31-13+deb11u7).
+0 upgraded, 0 newly installed, 0 to remove and 39 not upgraded.
