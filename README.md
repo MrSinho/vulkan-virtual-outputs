@@ -1,4 +1,4 @@
-# shtemplate
+# Vulkan Virtual Outputs
 
 Template repository used for many C-based projects. Sets up some boilerplate code for C headers, `CMake` and `Doxygen`.
 

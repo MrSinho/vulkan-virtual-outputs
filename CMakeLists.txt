@@ -1,48 +1,55 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 
 
 
-project(shtemplate C)
+project(vvo C)
 
 
 
-set(SH_TEMPLATE_VERSION  "pre-release")
-set(SH_TEMPLATE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(VVO_VERSION  "pre-release")
+set(VVO_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 
-option(SH_TEMPLATE_BINARIES_DIR  CACHE OFF)
-option(SH_TEMPLATE_BUILD_EXAMPLE CACHE OFF)
+option(VVO_BINARIES_DIR  CACHE OFF)
+option(VVO_BUILD_EXAMPLE CACHE OFF)
 
-if (NOT SH_TEMPLATE_BINARIES_DIR)
-set(SH_TEMPLATE_BINARIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+
+
+if (NOT VVO_BINARIES_DIR)
+
+if (WIN32)
+set(VVO_BINARIES_DIR ${VVO_ROOT_DIR}/bin/windows)
+elseif(UNIX)
+set(VVO_BINARIES_DIR ${VVO_ROOT_DIR}/bin/linux)
+endif(WIN32)
+
 endif()
 
 
 
-message(STATUS "SH_TEMPLATE_VERSION       : ${SH_TEMPLATE_VERSION}")
-message(STATUS "SH_TEMPLATE_ROOT_DIR      : ${SH_TEMPLATE_ROOT_DIR}")
-message(STATUS "SH_TEMPLATE_BINARIES_DIR  : ${SH_TEMPLATE_BINARIES_DIR}")
-message(STATUS "SH_TEMPLATE_BUILD_EXAMPLE : ${SH_TEMPLATE_BUILD_EXAMPLE}")
+message(STATUS "VVO_VERSION       : ${VVO_VERSION}")
+message(STATUS "VVO_ROOT_DIR      : ${VVO_ROOT_DIR}")
+message(STATUS "VVO_BINARIES_DIR  : ${VVO_BINARIES_DIR}")
+message(STATUS "VVO_BUILD_EXAMPLE : ${VVO_BUILD_EXAMPLE}")
 
 
 
-include(shtemplate/shtemplate.cmake)
-include(docs/shtemplate-docs.cmake)
-include(example/shtemplate-example.cmake)
-
+include(vvo/vvo.cmake)
+include(docs/vvo-docs.cmake)
+include(example/vvo-example.cmake)
 
 
 
 function(main)
 
-build_shtemplate()
-build_shtemplate_docs()
+build_vvo()
+build_vvo_docs()
 
-if (SH_TEMPLATE_BUILD_EXAMPLE)
-    build_shtemplate_example()
-endif(SH_TEMPLATE_BUILD_EXAMPLE)
+if (VVO_BUILD_EXAMPLE)
+build_vvo_example()
+endif(VVO_BUILD_EXAMPLE)
 
 endfunction()
 

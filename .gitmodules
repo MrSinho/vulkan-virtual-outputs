@@ -4,3 +4,9 @@
 [submodule ".shci/shci"]
 	path = .shci/shci
 	url = https://github.com/mrsinho/shci.git
+[submodule "externals/mongoose"]
+	path = externals/mongoose
+	url = https://github.com/cesanta/mongoose.git
+[submodule "externals/stb"]
+	path = externals/stb
+	url = https://github.com/nothings/stb.git
