@@ -8,7 +8,7 @@
 
 ![](./docs/media/gradient.png)
 
-What it does right now? Streaming images through http requests and web socket
+What it does right now? Streaming images through http requests and web socket. No vulkan implementation yet!
 
 ## Overview
 
