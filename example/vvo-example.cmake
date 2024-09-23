@@ -15,7 +15,7 @@ endif()
 
 function(build_vvo_example)
 
-add_executable(vvo-example example/src/vvo-example.c)
+add_executable(vvo-example ${VVO_ROOT_DIR}/example/src/vvo-example.c)
 
 target_link_libraries(vvo-example PUBLIC vvo)
 
