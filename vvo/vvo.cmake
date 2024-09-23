@@ -9,6 +9,8 @@ endif()
 
 if (NOT DEFINED VVO_ROOT_DIR)
 message(FATAL_ERROR "vvo cmake error: missing VVO_ROOT_DIR")
+else()
+set(VVO_INCLUDE_DIR ${VVO_ROOT_DIR}/vvo/include)
 endif()
 
 
@@ -35,7 +37,7 @@ add_library(vvo
 )
 
 target_include_directories(vvo PUBLIC 
-    ${CMAKE_CURRENT_SOURCE_DIR}/vvo/include
+    ${VVO_INCLUDE_DIR}
     ${Vulkan_INCLUDE_DIR}
     ${VVO_ROOT_DIR}/externals
 )
