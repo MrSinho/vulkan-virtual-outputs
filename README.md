@@ -1,6 +1,5 @@
 # Vulkan Virtual Outputs
 
-Template repository used for many C-based projects. Sets up some boilerplate code for C headers, `CMake` and `Doxygen`.
 
 ![](https://img.shields.io/badge/Sinho_softworks%20|%20Vulkan%20Virtual%20Outputs-FFBF00?style=for-the-badge&logo=&logoColor=white&labelColor=990042)
 [![](https://img.shields.io/badge/GitHub_repository-000000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mrsinho/shtemplate)
@@ -9,11 +8,11 @@ Template repository used for many C-based projects. Sets up some boilerplate cod
 
 ![](./docs/media/gradient.png)
 
-Streaming images through http requests and web socket
+What it does right now? Streaming images through http requests and web socket
 
 ## Overview
 
-This template has been used on many libraries (see [`shengine`](https://mrsinho.github.io/shengine-docs), [`shgui`](https://mrsinho.github.io/shgui-docs))
+
 
 ![](.shci/linux/linux-exit-code.svg)
 ![](.shci/windows/windows-exit-code.svg)
