@@ -30,7 +30,7 @@ include(ExternalProject)
 
 
 add_library(vvo 
-    vvo/src/vvo.c
+    ${VVO_ROOT_DIR}/vvo/src/vvo.c
     ${VVO_ROOT_DIR}/externals/mongoose/mongoose.c
 )
 
