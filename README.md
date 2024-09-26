@@ -8,7 +8,7 @@ A lightweight library for capturing and streaming Vulkan images in a local http 
 [TOC]
 
 ![](./docs/media/gradient.png)
-![](./docs/media/headless-scene-browser.png)
+![](./docs/media/scene-headless-overview.png)
 
 
 ## Overview
