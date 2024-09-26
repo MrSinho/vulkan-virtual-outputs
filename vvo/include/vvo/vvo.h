@@ -1,12 +1,16 @@
 #ifndef VVO_H
 #define VVO_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif//__cplusplus
+
 
 
 #include <stdint.h>
 #include <inttypes.h>
 #include <stdio.h>
-#include <shvulkan/shvulkan.h>
+#include <shvulkan/shVulkan.h>
 #include <mongoose/mongoose.h>
 
 

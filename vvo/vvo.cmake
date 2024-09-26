@@ -31,6 +31,7 @@ endif()
 
 add_library(vvo 
     ${VVO_ROOT_DIR}/vvo/src/vvo.c
+    ${VVO_ROOT_DIR}/vvo/src/vvoTime.c
     ${VVO_ROOT_DIR}/externals/mongoose/mongoose.c
 )
 

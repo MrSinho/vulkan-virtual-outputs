@@ -4,19 +4,10 @@ extern "C" {
 
 
 
-#include <shvulkan/shvulkan.h>
+#include <shvulkan/shVulkan.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb/stb_image_write.h>
-
-	//in vvo time
-//#ifdef _WIN32
-//#include <Windows.h>
-//#else
-//#include <termios.h>
-//#endif//_WIN32
-
-
 
 #include "vvo/vvo.h"
 
@@ -701,16 +692,6 @@ void vvoHandleEvents(
 		mg_ws_send(p_connection, p_vvo->p_png_image_data, p_vvo->png_image_size, WEBSOCKET_OP_BINARY);
 		//vvoSleepMs(1);
 	}
-}
-
-
-
-void vvoSleepMs(uint32_t milliseconds) {
-#ifdef _WIN32
-	Sleep((DWORD)milliseconds);
-#else
-	usleep(milliseconds * 1000);
-#endif//_WIN32
 }
 
 
