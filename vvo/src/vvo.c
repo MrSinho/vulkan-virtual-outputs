@@ -632,9 +632,9 @@ void vvoHandleEvents(
 	void*            event_data
 ) {
 
-	vvoMessage(event == MG_EV_HTTP_MSG, "vvoHandleEvents: http connection established");
-	vvoMessage(event == MG_EV_WS_OPEN,  "vvoHandleEvents: websocket connection established");
-	vvoMessage(event == MG_EV_WS_MSG,   "vvoHandleEvents: websocket message received");
+	//vvoMessage(event == MG_EV_HTTP_MSG, "vvoHandleEvents: http connection established");
+	//vvoMessage(event == MG_EV_WS_OPEN,  "vvoHandleEvents: websocket connection established");
+	//vvoMessage(event == MG_EV_WS_MSG,   "vvoHandleEvents: websocket message received");
 
 	VvoHandle*             p_vvo            = p_connection->fn_data;
 	MongoHttpMessage*      p_http_message      = NULL;
@@ -658,10 +658,10 @@ void vvoHandleEvents(
 		     if (square_request )  { mg_http_reply(p_connection, VVO_HTTP_OK_INT, VVO_HTML_CONTENT_TYPE_HEADER, square);  }
 		else if (squares_request)  { mg_http_reply(p_connection, VVO_HTTP_OK_INT, VVO_HTML_CONTENT_TYPE_HEADER, squares); }
 		else if (image_request)    { mg_http_reply(p_connection, VVO_HTTP_OK_INT, VVO_HTML_CONTENT_TYPE_HEADER, image);   }
-		else if (stream_request)   { puts("stream request"); mg_http_reply(p_connection, VVO_HTTP_OK_INT, VVO_HTML_CONTENT_TYPE_HEADER, web_socket_http_client); }
+		else if (stream_request)   { mg_http_reply(p_connection, VVO_HTTP_OK_INT, VVO_HTML_CONTENT_TYPE_HEADER, web_socket_http_client); }
 
 		//redirected requests 
-		else if (stream_websocket) { puts("going to websocket"); mg_ws_upgrade(p_connection, p_http_message, NULL); } //change connection to websocket
+		else if (stream_websocket) { mg_ws_upgrade(p_connection, p_http_message, NULL); } //change connection to websocket
 
 		//assets requests
 		else if (png_request) {
@@ -686,7 +686,7 @@ void vvoHandleEvents(
 		}
 
 		else { 
-			printf("Unsupported URI: %s", p_http_message->uri.buf);
+			//printf("Unsupported URI: %s", p_http_message->uri.buf);
 			mg_http_reply(p_connection, VVO_HTTP_NOT_FOUND_INT, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Unsupported URI")); 
 		}
 
