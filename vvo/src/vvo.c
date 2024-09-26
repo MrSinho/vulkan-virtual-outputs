@@ -447,7 +447,7 @@ uint8_t vvoReadDstImage(
 		p_vvo->dst_image_memory,
 		p_vvo->dst_image_offset,
 		VK_WHOLE_SIZE,
-		&p_vvo->p_dst_image_data,
+		(void**)&p_vvo->p_dst_image_data,
 		NULL
 	);
 
