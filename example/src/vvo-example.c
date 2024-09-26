@@ -4,8 +4,9 @@ extern "C" {
 
 
 
-#include <vvo/vvo.h>
 #include <stdio.h>
+
+#include <vvo/vvo.h>
 
 
 
@@ -59,36 +60,7 @@ int main(void) {
 		i++;
 	}
 
-	vvoReleaseImages(&handle);
 	vvoRelease(&handle);
-
-	//uint32_t width  = 100;
-	//uint32_t height = 100;
-	//
-	//VvoSurface surface = {
-	//	.width  = width,
-	//	.height = height
-	//};
-	//
-	//VvoSupportedImageFormat image_format = VVO_FORMAT_R16G16B16_SFLOAT;
-	//
-	//VvoSwapchain swapchain = {
-	//	.surface = surface,
-	//	.format  = image_format,
-	//
-	//	.swapchain_image_count = 1,
-	//	.vsync                 = VVO_FALSE,
-	//	
-	//	.scissors_x = width,
-	//	.scissors_y = height,
-	//	
-	//	.image_extent_x = width,
-	//	.image_extent_y = height,
-	//};
-	//
-	//printf("Hello world");
-
-	
 
 	return 0;
 }
