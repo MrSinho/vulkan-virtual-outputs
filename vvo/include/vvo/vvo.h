@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <stdio.h>
-#include <vulkan/vulkan.h>
+#include <shvulkan/shvulkan.h>
 #include <mongoose/mongoose.h>
 
 
@@ -35,7 +35,6 @@ typedef struct mg_http_serve_opts MongoHttpServeOptions;
 #define VVO_PNG_CONTENT_LENGTH_HEADER "Content-Length: %u\r\n"
 #define VVO_END_HTTP_REPLY            "\r\n"
 
-#define VVO_MAX_SWAPCHAIN_IMAGE_COUNT 6
 
 
 #define vvoError(condition, msg, failure_expression) \
@@ -112,107 +111,133 @@ static char* web_socket_http_client = "<!DOCTYPE html>\
 
 
 
-typedef enum VvoSupportedImageFormat {
-    
-    //Signed 1d floating point numbers
-    VVO_FORMAT_R16_SFLOAT = VK_FORMAT_R16_SFLOAT,
-    VVO_FORMAT_R32_SFLOAT = VK_FORMAT_R32_SFLOAT,
-    VVO_FORMAT_R64_SFLOAT = VK_FORMAT_R64_SFLOAT,
-
-    //Signed 2d floating point numbers
-    VVO_FORMAT_R16G16_SFLOAT = VK_FORMAT_R16G16_SFLOAT,
-    VVO_FORMAT_R32G32_SFLOAT = VK_FORMAT_R32G32_SFLOAT,
-    VVO_FORMAT_R64G64_SFLOAT = VK_FORMAT_R64G64_SFLOAT,
-
-    //Signed 3d floating point numbers
-    VVO_FORMAT_R16G16B16_SFLOAT = VK_FORMAT_R16G16B16_SFLOAT,
-    VVO_FORMAT_R32G32B32_SFLOAT = VK_FORMAT_R32G32B32_SFLOAT,
-    VVO_FORMAT_R64G64B64_SFLOAT = VK_FORMAT_R64G64B64_SFLOAT,
-
-    //Unsigned 1d integers
-    VVO_FORMAT_R8_UINT  = VK_FORMAT_R8_UINT,
-    VVO_FORMAT_R16_UINT = VK_FORMAT_R16_UINT,
-    VVO_FORMAT_R32_UINT = VK_FORMAT_R32_UINT,
-    VVO_FORMAT_R64_UINT = VK_FORMAT_R64_UINT,
-
-    //Unsigned 2d integers
-    VVO_FORMAT_R8G8_UINT   = VK_FORMAT_R8G8_UINT,
-    VVO_FORMAT_R16G16_UINT = VK_FORMAT_R16G16_UINT,
-    VVO_FORMAT_R32G32_UINT = VK_FORMAT_R32G32_UINT,
-    VVO_FORMAT_R64G64_UINT = VK_FORMAT_R64G64_UINT,
-
-    //Unsigned 3d integers
-    VVO_FORMAT_R8G8B8_UINT    = VK_FORMAT_R8G8B8_UINT,
-    VVO_FORMAT_R16G16B16_UINT = VK_FORMAT_R16G16B16_UINT,
-    VVO_FORMAT_R32G32B32_UINT = VK_FORMAT_R32G32B32_UINT,
-    VVO_FORMAT_R64G64B64_UINT = VK_FORMAT_R64G64B64_UINT,
-
-    //Signed 1d integers
-    VVO_FORMAT_R8_SINT  = VK_FORMAT_R8_SINT,
-    VVO_FORMAT_R16_SINT = VK_FORMAT_R16_SINT,
-    VVO_FORMAT_R32_SINT = VK_FORMAT_R32_SINT,
-    VVO_FORMAT_R64_SINT = VK_FORMAT_R64_SINT,
-
-    //Signed 2d integers
-    VVO_FORMAT_R8G8_SINT   = VK_FORMAT_R8G8_SINT,
-    VVO_FORMAT_R16G16_SINT = VK_FORMAT_R16G16_SINT,
-    VVO_FORMAT_R32G32_SINT = VK_FORMAT_R32G32_SINT,
-    VVO_FORMAT_R64G64_SINT = VK_FORMAT_R64G64_SINT,
-
-    //Signed 3d integers
-    VVO_FORMAT_R8G8B8_SINT    = VK_FORMAT_R8G8B8_SINT,
-    VVO_FORMAT_R16G16B16_SINT = VK_FORMAT_R16G16B16_SINT,
-    VVO_FORMAT_R32G32B32_SINT = VK_FORMAT_R32G32B32_SINT,
-    VVO_FORMAT_R64G64B64_SINT = VK_FORMAT_R64G64B64_SINT,
-
-} VvoSupportedImageFormat;
-
-
-
-typedef struct VvoSurface {
-
-    uint32_t width;
-    uint32_t height;
-    
-} VvoSurface;
-
-
-
-typedef struct VvoSwapchain {
-
-    VvoSurface               surface;
-    VvoSupportedImageFormat  format;
-
-    uint32_t swapchain_image_count;
-    VvoBool  vsync;
-
-    uint32_t scissors_x;
-    uint32_t scissors_y;
-
-    uint32_t image_extent_x;
-    uint32_t image_extent_y;
-
-    uint32_t images_sizes[VVO_MAX_SWAPCHAIN_IMAGE_COUNT];
-    uint8_t* p_images[VVO_MAX_SWAPCHAIN_IMAGE_COUNT];
-
-
-} VvoSwapchain;
-
-
+#define VVO_MAX_SRC_IMAGE_COUNT 6
 
 typedef struct VvoHandle {
 
-    VvoSwapchain      swapchain;
-    MongoEventManager event_manager;
+    VkPhysicalDevice physical_device;
+	VkDevice         device;
+
+	uint32_t surface_width;
+	uint32_t surface_height;
+
+	uint32_t supported_color_formats_count;
+
+	VkFormat supported_color_formats[SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES];
+	uint32_t single_channels_sizes  [SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES];
+	uint32_t channels_count         [SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES];
+	uint32_t channels_types         [SH_MAX_STACK_DEVICE_COLOR_FORMATS_QUERIES];
+
+	uint32_t src_image_count;
+
+	VkFormat src_image_format;
+	uint32_t src_image_channel_size;
+	uint32_t src_image_channel_count;
+	uint32_t src_image_channel_type;
+    uint32_t src_image_size;
+
+	VkImage        src_images       [VVO_MAX_SRC_IMAGE_COUNT];
+	VkDeviceMemory src_images_memory[VVO_MAX_SRC_IMAGE_COUNT];
+	VkImageView    src_image_views  [VVO_MAX_SRC_IMAGE_COUNT];
+
+	VkAttachmentDescription color_attachment;
+	VkAttachmentReference   color_attachment_reference;
+
+	VkAttachmentDescription depth_attachment;
+	VkAttachmentReference   depth_attachment_reference;
+
+	VkImage             dst_image;
+	VkDeviceMemory      dst_image_memory;
+
+	VkSubresourceLayout dst_image_subresource_layout;
+	uint32_t            dst_image_offset;
+	uint8_t*            p_dst_image_data;
+
+	VkFence     image_copy_fence;
+	VkSemaphore image_copy_semaphore;
+
+	uint8_t* p_stbi_image_data;
+	
+	uint32_t png_image_size;
+	uint8_t* p_png_image_data;
+
+	uint32_t image_submissions_count;
+
+	MongoEventManager event_manager;
     MongoConnection*  p_connection;
 
 } VvoHandle;
 
 
 
+extern uint8_t vvoInit(
+	uint32_t         src_image_count,
+	uint32_t         surface_width,
+	uint32_t         surface_height,
+	VvoHandle*       p_vvo
+);
+
+extern uint8_t vvoVulkanInit(
+	VkDevice         device,
+	VkPhysicalDevice physical_device,
+	VvoHandle*       p_vvo
+);
+
+extern uint8_t vvoFindSupportedDeviceColorFormats(
+	VvoHandle* p_vvo
+);
+
+extern uint8_t vvoCreateSrcImages(
+	VvoHandle* p_vvo
+);
+
+extern uint8_t vvoCreateRenderpassColorAttachment(
+	VvoHandle* p_vvo
+);
+
+extern uint8_t vvoCreateDstImage(
+	VvoHandle* p_vvo
+);
+
+extern uint8_t vvoCopyToDstImage(
+	VvoHandle*       p_vvo,
+	VkCommandBuffer  transfer_cmd_buffer,
+	uint32_t         graphics_queue_family_index,
+	uint32_t         transfer_queue_family_index,
+	uint32_t         src_image_idx
+);
+
+extern uint8_t vvoSubmitImageCopy(
+	VvoHandle*       p_vvo,
+	VkCommandBuffer  transfer_cmd_buffer,
+	VkQueue          transfer_queue,
+	VkSemaphore      graphics_queue_finished_semaphore
+);
+
+extern uint8_t vvoFormatDstImageData(
+	VvoHandle* p_vvo
+);
+
+extern uint8_t vvoReadDstImage(
+	VvoHandle* p_vvo
+);
+
+extern uint8_t vvoGetDstImagePngData(
+	VvoHandle* p_vvo
+);
+
+extern uint8_t vvoWriteDstImageToDisk(
+	VvoHandle* p_vvo,
+	char*      path
+);
+
+extern uint8_t vvoFreeStbiImageData(
+	VvoHandle* p_vvo
+);
+
 extern uint8_t vvoSetupServer(
     VvoHandle* p_handle,
-    char* uri
+    char*      uri
 );
 
 extern uint8_t vvoPollEvents(
@@ -221,7 +246,11 @@ extern uint8_t vvoPollEvents(
 
 extern uint8_t vvoMainLoop(
     VvoHandle* p_handle,
-    uint8_t* p_loop_condition
+    uint8_t*   p_loop_condition
+);
+
+extern uint8_t vvoReleaseImages(
+	VvoHandle* p_handle
 );
 
 extern uint8_t vvoRelease(
@@ -231,7 +260,7 @@ extern uint8_t vvoRelease(
 extern void vvoHandleEvents(
     MongoConnection* p_connection,
     int              event,
-    void* event_data
+    void*            event_data
 );
 
 extern void vvoSleepMs(

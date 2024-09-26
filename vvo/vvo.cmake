@@ -17,18 +17,16 @@ endif()
 
 function(build_vvo)
 
-find_package(Vulkan REQUIRED)
 
-message(STATUS "vvo message: found Vulkan")
-message(STATUS "vvo message: Vulkan_INCLUDE_DIR: ${Vulkan_INCLUDE_DIR}")
-message(STATUS "vvo message: Vulkan_LIBRARY:     ${Vulkan_LIBRARY}")
+if (NOT TARGET shvulkan)
 
-include(ExternalProject)
+set(SH_VULKAN_ROOT_DIR     ${VVO_ROOT_DIR}/externals/shvulkan)
+set(SH_VULKAN_BINARIES_DIR ${VVO_BINARIES_DIR})
 
-#set(ENABLE_STATIC ON)
-#ExternalProject_Add(libjpeg-turbo 
-#    SOURCE_DIR ${VVO_ROOT_DIR}/externals/libjpeg-turbo
-#)
+include(${VVO_ROOT_DIR}/externals/shvulkan/shvulkan/shvulkan.cmake)
+build_shvulkan()
+
+endif()
 
 
 add_library(vvo 
@@ -38,22 +36,15 @@ add_library(vvo
 
 target_include_directories(vvo PUBLIC 
     ${VVO_INCLUDE_DIR}
-    ${Vulkan_INCLUDE_DIR}
     ${VVO_ROOT_DIR}/externals
 )
 
 target_link_libraries(vvo PUBLIC
-    ${Vulkan_LIBRARY}
+    shvulkan
 )
 
-if (WIN32)
 set_target_properties(vvo PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY      ${VVO_BINARIES_DIR}/windows
+    ARCHIVE_OUTPUT_DIRECTORY ${VVO_BINARIES_DIR}
 )
-else()
-set_target_properties(vvo PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY      ${VVO_BINARIES_DIR}/linux
-)
-endif(WIN32)
 
 endfunction()

@@ -7,9 +7,6 @@ extern "C" {
 #include <vvo/vvo.h>
 #include <stdio.h>
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb/stb_image_write.h>
-
 
 
 int main(void) {
@@ -17,20 +14,30 @@ int main(void) {
 	VvoHandle handle = { 0 };
 
 
-	uint32_t width = 400;
+	uint32_t width  = 400;
 	uint32_t height = 400;
 
-	
+	vvoInit(1, width, height, &handle);
+
 	vvoSetupServer(&handle, "http://127.0.0.1:8001");
 
 	uint32_t i = 1;
 
+	uint32_t src_image_channel_count = 3;
+	uint32_t src_image_channel_size  = 1;
+	uint32_t src_image_size          = width * height * src_image_channel_count * src_image_channel_size;
+
+	uint8_t* p_stbi_image_data = calloc(src_image_size, 1);
+
+	handle.src_image_channel_count = src_image_channel_count;
+	handle.src_image_channel_size  = src_image_channel_size;
+	handle.src_image_size          = src_image_size;
+	handle.p_stbi_image_data       = p_stbi_image_data;
+	
+	vvoError(p_stbi_image_data == NULL, "main: invalid stbi image memory", return -1);
+
 	while (1) {
 		vvoPollEvents(&handle);
-		
-		uint8_t* p_buffer = calloc(width * height * 3, 1);
-
-		vvoError(p_buffer == NULL, "invalid buffer memory", return 1);
 
 		for (uint32_t y = 0; y < height; y++) {
 			for (uint32_t x = 0; x < width; x++) {
@@ -41,26 +48,19 @@ int main(void) {
 				uint8_t y_gradient = (uint8_t)((255.0f * y) / height) * (float)((i % 50) / 50.0f);
 				uint8_t r_gradient = (uint8_t)(255                    * ((float)(i % 50) / 50.0f));
 
-				p_buffer[pixel_index + 0] = r_gradient;//Red
-				p_buffer[pixel_index + 1] = x_gradient;//Green
-				p_buffer[pixel_index + 2] = y_gradient;//Blue
+				p_stbi_image_data[pixel_index + 0] = r_gradient;//Red
+				p_stbi_image_data[pixel_index + 1] = x_gradient;//Green
+				p_stbi_image_data[pixel_index + 2] = y_gradient;//Blue
 			}
 		}
 
-		uint32_t image_size = 0;
-		uint8_t* p_image = stbi_write_png_to_mem(p_buffer, width * 3, width, height, 3, &image_size);
-
-		vvoError(p_image == NULL, "invalid image memory", return 1);
-
-		handle.swapchain.images_sizes[0] = image_size;
-		handle.swapchain.p_images[0] = p_image;
+		vvoGetDstImagePngData(&handle);
 
 		i++;
 	}
 
+	vvoReleaseImages(&handle);
 	vvoRelease(&handle);
-
-
 
 	//uint32_t width  = 100;
 	//uint32_t height = 100;
