@@ -1,6 +1,6 @@
 # Vulkan Virtual Outputs
 
-A lightweight library for capturing and streaming vulkan images in a local http server.
+A lightweight library for capturing and streaming Vulkan images in a local http server, directly from the application mainloop. This projects may be used for remote devices and terminal-like environments, which hardware does support graphics operations, but do not support Desktop like windows (e.g. Docker containers, terminal virtual machines, embedded Linux devices, servers, etc.).   
 
 ![](https://img.shields.io/badge/Sinho_softworks%20|%20Vulkan%20Virtual%20Outputs-FFBF00?style=for-the-badge&logo=&logoColor=white&labelColor=990042)
 [![](https://img.shields.io/badge/GitHub_repository-000000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mrsinho/shtemplate)
@@ -8,7 +8,7 @@ A lightweight library for capturing and streaming vulkan images in a local http 
 [TOC]
 
 ![](./docs/media/gradient.png)
-![](./docs/media/scene.png)
+![](./docs/media/headless-scene-browser.png)
 
 
 ## Overview
