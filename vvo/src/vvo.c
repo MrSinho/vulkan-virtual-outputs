@@ -153,14 +153,21 @@ uint8_t vvoCreateSrcImages(
 }
 
 uint8_t vvoCreateRenderpassColorAttachment(
-	VvoHandle* p_vvo
+	VvoHandle* p_vvo,
+	uint32_t   attachment_idx
 ) {
 	vvoError(p_vvo == NULL, "vvoCreateColorAttachment: invalid vvo handle memory", return 0);
+
+	VkAttachmentLoadOp load_treatment = VK_ATTACHMENT_LOAD_OP_CLEAR;
+
+	if (attachment_idx > 0) {//is not input color attachment, but it's resolve attachment
+		load_treatment = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	}
 
 	shCreateRenderpassAttachment(
 		p_vvo->src_image_format,//format
 		1,//sample_count
-		VK_ATTACHMENT_LOAD_OP_CLEAR,//load_treatment
+		load_treatment,//load_treatment
 		VK_ATTACHMENT_STORE_OP_STORE,//store_treatment
 		VK_ATTACHMENT_LOAD_OP_DONT_CARE,//stencil_load_treatment
 		VK_ATTACHMENT_STORE_OP_DONT_CARE,//stencil_store_treatment
@@ -170,7 +177,7 @@ uint8_t vvoCreateRenderpassColorAttachment(
 	);
 
 	shCreateRenderpassAttachmentReference(
-		0,//attachment_idx
+		attachment_idx,//attachment_idx
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,//layout
 		&p_vvo->color_attachment_reference//p_attachment_reference
 	);
@@ -528,78 +535,93 @@ uint8_t vvoFreeStbiImageData(
 }
 
 uint8_t vvoSetupServer(
-	VvoHandle* p_handle,
+	VvoHandle* p_vvo,
 	char*      uri
 ) {
-	vvoError(p_handle == NULL, "vvoPollEvents: invalid handle memory", return 0);
+	vvoError(p_vvo == NULL, "vvoPollEvents: invalid handle memory", return 0);
 
-	mg_mgr_init(&p_handle->event_manager);
+	mg_mgr_init(&p_vvo->event_manager);
 
-	mg_http_listen(&p_handle->event_manager, uri, vvoHandleEvents, p_handle);
+	mg_http_listen(&p_vvo->event_manager, uri, vvoHandleEvents, p_vvo);
 
-	//p_connection->fn_data = p_handle;
+	//p_connection->fn_data = p_vvo;
 
 	return 1;
 }
 
 uint8_t vvoPollEvents(
-	VvoHandle* p_handle
+	VvoHandle* p_vvo
 ) {
-	vvoError(p_handle == NULL, "vvoPollEvents: invalid handle memory", return 0);
+	vvoError(p_vvo == NULL, "vvoPollEvents: invalid handle memory", return 0);
 
-	mg_mgr_poll(&p_handle->event_manager, 1000);
+	mg_mgr_poll(&p_vvo->event_manager, 1000);
 
 	return 1;
 }
 
 uint8_t vvoMainLoop(
-	VvoHandle* p_handle,
+	VvoHandle* p_vvo,
 	uint8_t*   p_loop_condition
 ) {
-	vvoError(p_handle         == NULL, "vvoMainLoop: invalid handle memory",         return 0);
+	vvoError(p_vvo         == NULL, "vvoMainLoop: invalid handle memory",         return 0);
 	vvoError(p_loop_condition == NULL, "vvoMainLoop: invalid loop condition memory", return 0);
 
 	while (*p_loop_condition) {
-		vvoPollEvents(p_handle);
+		vvoPollEvents(p_vvo);
 	}
 
 	return 1;
 }
 
-uint8_t vvoReleaseImages(
-	VvoHandle* p_handle
+uint8_t vvoVulkanRelease(
+	VvoHandle* p_vvo
 ) {
-	vvoError(p_handle == NULL, "vvoReleaseImages: invalid handle memory", return 0);
+	vvoError(p_vvo == NULL, "vvoVulkanRelease: invalid handle memory", return 0);
 
-	for (uint32_t src_image_idx = 0; src_image_idx < p_handle->src_image_count; src_image_idx++) {
-		//TODO manage vulkan src images
+	VkDevice device = p_vvo->device;
+
+	shWaitDeviceIdle(device);
+
+	shDestroyImageViews(
+		device, p_vvo->src_image_count, p_vvo->src_image_views
+	);
+
+	for (uint32_t src_image_idx = 0; src_image_idx < p_vvo->src_image_count; src_image_idx++) {
+		shClearImageMemory(
+			device,//device
+			p_vvo->src_images[src_image_idx],//image
+			p_vvo->src_images_memory[src_image_idx]//image_memory
+		);
 	}
 
-	//TODO manage vulkan dst image
+	shClearImageMemory(
+		device,//device
+		p_vvo->dst_image,//image
+		p_vvo->dst_image_memory//image_memory
+	);
 
-	if (p_handle->p_dst_image_data != NULL) {
-		free(p_handle->p_dst_image_data);
-	}
-	
-	if (p_handle->p_stbi_image_data != NULL) {
-		free(p_handle->p_stbi_image_data);
-	}
+	shDestroySemaphores(device, 1, &p_vvo->image_copy_semaphore);
 
-	if (p_handle->p_png_image_data != NULL) {
-		p_handle->png_image_size = 0;
-		free(p_handle->p_png_image_data);
-	}
-
+	shDestroyFences(device, 1, &p_vvo->image_copy_fence);
 
 	return 1;
 }
 
 uint8_t vvoRelease(
-	VvoHandle* p_handle
+	VvoHandle* p_vvo
 ) {
-	vvoError(p_handle == NULL, "vvoRelease: invalid handle memory", return 0);
+	vvoError(p_vvo == NULL, "vvoRelease: invalid handle memory", return 0);
 
-	mg_mgr_free(&p_handle->event_manager);
+	if (p_vvo->p_stbi_image_data != NULL) {
+		free(p_vvo->p_stbi_image_data);
+	}
+
+	if (p_vvo->p_png_image_data != NULL) {
+		p_vvo->png_image_size = 0;
+		free(p_vvo->p_png_image_data);
+	}
+
+	mg_mgr_free(&p_vvo->event_manager);
 
 	return 1;
 }
@@ -614,7 +636,7 @@ void vvoHandleEvents(
 	vvoMessage(event == MG_EV_WS_OPEN,  "vvoHandleEvents: websocket connection established");
 	vvoMessage(event == MG_EV_WS_MSG,   "vvoHandleEvents: websocket message received");
 
-	VvoHandle*             p_handle            = p_connection->fn_data;
+	VvoHandle*             p_vvo            = p_connection->fn_data;
 	MongoHttpMessage*      p_http_message      = NULL;
 	MongoWebSocketMessage* p_websocket_message = NULL;
 
@@ -650,10 +672,10 @@ void vvoHandleEvents(
 				VVO_PNG_CONTENT_LENGTH_HEADER
 				VVO_END_HTTP_REPLY
 				,
-				p_handle->png_image_size
+				p_vvo->png_image_size
 			);
 
-			mg_send(p_connection, p_handle->p_png_image_data, p_handle->png_image_size);
+			mg_send(p_connection, p_vvo->p_png_image_data, p_vvo->png_image_size);
 
 		}
 		else if (mg_match(p_http_message->uri, mg_str("/js/web_socket_http_client.js"), NULL)) {
@@ -676,7 +698,7 @@ void vvoHandleEvents(
 	}
 	
 	if (p_connection->is_websocket) {//while the connection is websocket
-		mg_ws_send(p_connection, p_handle->p_png_image_data, p_handle->png_image_size, WEBSOCKET_OP_BINARY);
+		mg_ws_send(p_connection, p_vvo->p_png_image_data, p_vvo->png_image_size, WEBSOCKET_OP_BINARY);
 		//vvoSleepMs(1);
 	}
 }
