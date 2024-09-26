@@ -9,7 +9,7 @@ extern "C" {
 #ifdef _WIN32
 #include <Windows.h>
 #else
-#include <termios.h>
+#include <unistd.h>
 #endif//_WIN32
 
 #include <inttypes.h>
