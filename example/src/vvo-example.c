@@ -45,9 +45,9 @@ int main(void) {
 
 				int pixel_index = (y * width + x) * 3;
 
-				uint8_t x_gradient = (uint8_t)((255.0f * x) / width)  * (float)((i % 50) / 50.0f);
-				uint8_t y_gradient = (uint8_t)((255.0f * y) / height) * (float)((i % 50) / 50.0f);
-				uint8_t r_gradient = (uint8_t)(255                    * ((float)(i % 50) / 50.0f));
+				uint8_t x_gradient = (uint8_t)(255 * x / width  * (i % 50) / 50);
+				uint8_t y_gradient = (uint8_t)(255 * y / height * (i % 50) / 50);
+				uint8_t r_gradient = (uint8_t)(255              * (i % 50) / 50);
 
 				p_stbi_image_data[pixel_index + 0] = r_gradient;//Red
 				p_stbi_image_data[pixel_index + 1] = x_gradient;//Green

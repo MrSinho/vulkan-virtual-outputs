@@ -11,6 +11,10 @@ extern "C" {
 #include <inttypes.h>
 #include <stdio.h>
 #include <shvulkan/shVulkan.h>
+
+#ifdef _MSC_VER
+#pragma warning (disable: 4267 28159 6255 6385 6031 6276 28182)
+#endif//_MSC_VER
 #include <mongoose/mongoose.h>
 
 

@@ -12,6 +12,9 @@ extern "C" {
 #include <termios.h>
 #endif//_WIN32
 
+#include <inttypes.h>
+
+
 
 void vvoSleepMs(
     uint32_t milliseconds

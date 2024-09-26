@@ -4,8 +4,6 @@ extern "C" {
 
 #include "vvo/vvoTime.h"
 
-#include <inttypes.h>
-
 
 
 void vvoSleepMs(

@@ -7,6 +7,9 @@ extern "C" {
 #include <shvulkan/shVulkan.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#ifdef _MSC_VER
+#pragma warning (disable: 4996)
+#endif//_MSC_VER
 #include <stb/stb_image_write.h>
 
 #include "vvo/vvo.h"
