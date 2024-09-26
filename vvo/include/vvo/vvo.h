@@ -192,7 +192,8 @@ extern uint8_t vvoCreateSrcImages(
 );
 
 extern uint8_t vvoCreateRenderpassColorAttachment(
-	VvoHandle* p_vvo
+	VvoHandle* p_vvo,
+	uint32_t   attachment_idx
 );
 
 extern uint8_t vvoCreateDstImage(
@@ -236,25 +237,25 @@ extern uint8_t vvoFreeStbiImageData(
 );
 
 extern uint8_t vvoSetupServer(
-    VvoHandle* p_handle,
+    VvoHandle* p_vvo,
     char*      uri
 );
 
 extern uint8_t vvoPollEvents(
-    VvoHandle* p_handle
+    VvoHandle* p_vvo
 );
 
 extern uint8_t vvoMainLoop(
-    VvoHandle* p_handle,
+    VvoHandle* p_vvo,
     uint8_t*   p_loop_condition
 );
 
-extern uint8_t vvoReleaseImages(
-	VvoHandle* p_handle
+extern uint8_t vvoVulkanRelease(
+	VvoHandle* p_vvo
 );
 
 extern uint8_t vvoRelease(
-    VvoHandle* p_handle
+    VvoHandle* p_vvo
 );
 
 extern void vvoHandleEvents(
