@@ -37,6 +37,7 @@ add_library(vvo
 target_include_directories(vvo PUBLIC 
     ${VVO_INCLUDE_DIR}
     ${VVO_ROOT_DIR}/externals
+    ${SH_VULKAN_ROOT_DIR}/shvulkan/include
 )
 
 target_link_libraries(vvo PUBLIC
