@@ -548,7 +548,7 @@ uint8_t vvoPollEvents(
 ) {
 	vvoError(p_vvo == NULL, "vvoPollEvents: invalid handle memory", return 0);
 
-	mg_mgr_poll(&p_vvo->event_manager, 1000);
+	mg_mgr_poll(&p_vvo->event_manager, 1);
 
 	return 1;
 }
