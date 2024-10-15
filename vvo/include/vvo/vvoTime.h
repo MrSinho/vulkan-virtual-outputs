@@ -16,7 +16,7 @@ extern "C" {
 
 
 
-void vvoSleepMs(
+extern void vvoSleepMs(
     uint32_t milliseconds
 );
 
