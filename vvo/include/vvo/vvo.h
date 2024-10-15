@@ -97,7 +97,7 @@ static char* square = "\
 static char* image = "\
 <!DOCTYPE html>\
 <html>\
-<body>\
+<body style=background-color:black>\
 \
 <img src=\"./output.png\">\
 \
@@ -107,7 +107,7 @@ static char* image = "\
 
 static char* web_socket_http_client = "<!DOCTYPE html>\
 <html>\
-<body>\
+<body style=background-color:black>\
 \
 <img id=\"image\"/>\
 \
