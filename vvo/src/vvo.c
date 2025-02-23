@@ -215,7 +215,7 @@ uint8_t vvoCreateDstImage(
 	);
 
 	uint32_t stbi_row_size = p_vvo->src_image_channel_count * 1 * p_vvo->surface_width;//stbi expects 8 bits per channel
-	p_vvo->p_stbi_image_data = calloc(1, p_vvo->surface_height * stbi_row_size);
+	//p_vvo->p_stbi_image_data = calloc(1, p_vvo->surface_height * stbi_row_size);//maybe no need, stbi automatically allocates mem
 
 	return 1;
 }
@@ -528,15 +528,40 @@ uint8_t vvoFreeStbiImageData(
 	return 1;
 }
 
+uint8_t vvoAddForwardSlashToUri(
+	char* dst,
+	char* src
+) {
+	vvoError(src == NULL, "vvoAddForwardSlashToUri: invalid src memory", return 0);
+	vvoError(dst == NULL, "vvoAddForwardSlashToUri: invalid dst memory", return 0);
+
+	if (src[0] != '/') { 
+		memcpy(&dst[1], src, strlen(src));
+		dst[0] = '/';
+	}
+	else {
+		strcpy(dst, src);
+	}
+
+	return 1;
+}
+
 uint8_t vvoSetupServer(
 	VvoHandle* p_vvo,
-	char*      uri
+	char*      root_uri,
+	char*      static_image_uri,
+	char*      png_output_uri,
+	char*      stream_uri
 ) {
 	vvoError(p_vvo == NULL, "vvoPollEvents: invalid handle memory", return 0);
 
+	vvoAddForwardSlashToUri(p_vvo->static_image_uri, static_image_uri);
+	vvoAddForwardSlashToUri(p_vvo->png_output_uri,   png_output_uri);
+	vvoAddForwardSlashToUri(p_vvo->stream_uri,       stream_uri);
+
 	mg_mgr_init(&p_vvo->event_manager);
 
-	mg_http_listen(&p_vvo->event_manager, uri, vvoHandleEvents, p_vvo);
+	mg_http_listen(&p_vvo->event_manager, root_uri, vvoHandleEvents, p_vvo);
 
 	//p_connection->fn_data = p_vvo;
 
@@ -549,6 +574,10 @@ uint8_t vvoPollEvents(
 	vvoError(p_vvo == NULL, "vvoPollEvents: invalid handle memory", return 0);
 
 	mg_mgr_poll(&p_vvo->event_manager, 1);
+
+	if (p_vvo->p_png_image_data != NULL) {
+		free(p_vvo->p_png_image_data);
+	}
 
 	return 1;
 }
@@ -630,7 +659,7 @@ void vvoHandleEvents(
 	//vvoMessage(event == MG_EV_WS_OPEN,  "vvoHandleEvents: websocket connection established");
 	//vvoMessage(event == MG_EV_WS_MSG,   "vvoHandleEvents: websocket message received");
 
-	VvoHandle*             p_vvo            = p_connection->fn_data;
+	VvoHandle*             p_vvo               = p_connection->fn_data;
 	MongoHttpMessage*      p_http_message      = NULL;
 	MongoWebSocketMessage* p_websocket_message = NULL;
 
@@ -640,13 +669,13 @@ void vvoHandleEvents(
 
 		vvoError(p_http_message == NULL, "invalid http message memory", return);
 
-		uint8_t time_request     = mg_match(p_http_message->uri, mg_str("/api/time/get"),  NULL);
-		uint8_t square_request   = mg_match(p_http_message->uri, mg_str("/square"),        NULL);
-		uint8_t squares_request  = mg_match(p_http_message->uri, mg_str("/squares"),       NULL);
-		uint8_t image_request    = mg_match(p_http_message->uri, mg_str("/static-image"),  NULL);
-		uint8_t png_request      = mg_match(p_http_message->uri, mg_str("/output.png"),    NULL);
-		uint8_t stream_request   = mg_match(p_http_message->uri, mg_str("/vvoStream"),     NULL);
-		uint8_t stream_websocket = mg_match(p_http_message->uri, mg_str("/vvoStreamWS"),   NULL);
+		uint8_t time_request     = mg_match(p_http_message->uri, mg_str("/api/time/get"),          NULL);
+		uint8_t square_request   = mg_match(p_http_message->uri, mg_str("/square"),                NULL);
+		uint8_t squares_request  = mg_match(p_http_message->uri, mg_str("/squares"),               NULL);
+		uint8_t image_request    = mg_match(p_http_message->uri, mg_str(p_vvo->static_image_uri),  NULL);
+		uint8_t png_request      = mg_match(p_http_message->uri, mg_str(p_vvo->png_output_uri),    NULL);
+		uint8_t stream_request   = mg_match(p_http_message->uri, mg_str(p_vvo->stream_uri),        NULL);
+		uint8_t stream_websocket = mg_match(p_http_message->uri, mg_str("/vvoStreamWS"),           NULL);
 
 		//html content requests
 		     if (square_request )  { mg_http_reply(p_connection, VVO_HTTP_OK_INT, VVO_HTML_CONTENT_TYPE_HEADER, square);  }

@@ -119,9 +119,15 @@ static char* web_socket_http_client = "<!DOCTYPE html>\
 
 
 
-#define VVO_MAX_SRC_IMAGE_COUNT 6
+#define VVO_MAX_SRC_IMAGE_COUNT  6
+#define VVO_MAX_STACK_URI_LENGTH 256
 
 typedef struct VvoHandle {
+
+	char root_uri        [VVO_MAX_STACK_URI_LENGTH];
+	char static_image_uri[VVO_MAX_STACK_URI_LENGTH];
+	char png_output_uri  [VVO_MAX_STACK_URI_LENGTH];
+	char stream_uri      [VVO_MAX_STACK_URI_LENGTH];
 
     VkPhysicalDevice physical_device;
 	VkDevice         device;
@@ -246,7 +252,10 @@ extern uint8_t vvoFreeStbiImageData(
 
 extern uint8_t vvoSetupServer(
     VvoHandle* p_vvo,
-    char*      uri
+	char*      root_uri,
+	char*      static_image_uri,
+	char*      png_output_uri,
+	char*      stream_uri
 );
 
 extern uint8_t vvoPollEvents(

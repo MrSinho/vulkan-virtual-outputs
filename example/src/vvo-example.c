@@ -20,8 +20,11 @@ int main(void) {
 
 	vvoInit(1, width, height, &handle);
 
-	char* uri = "http://127.0.0.1:8001";
-	vvoSetupServer(&handle, uri);
+	char* root_uri         = "http://127.0.0.1:8001";
+	char* static_image_uri = "/static-image";
+	char* png_uri          = "/output.png";
+	char* stream_uri       = "/stream";
+	vvoSetupServer(&handle, root_uri, static_image_uri, png_uri, stream_uri);
 
 	uint32_t i = 1;
 
@@ -38,9 +41,10 @@ int main(void) {
 	
 	vvoError(p_stbi_image_data == NULL, "main: invalid stbi image memory", return -1);
 
-	printf("Hosting stream server at %s\n", uri);
-	printf("For a single image capture, go to %s/static-image\n", uri);
-	printf("For a stream of multiple frames, go to %s/vvoStream\n", uri);
+	printf("Hosting stream server at %s\n", root_uri);
+	printf("For a single image capture, go to %s%s\n", root_uri, static_image_uri);
+	printf("For a downloadable png, go to %s%s\n", root_uri, png_uri);
+	printf("For a stream of multiple frames, go to %s%s\n", root_uri, stream_uri);
 
 	while (1) {
 		vvoPollEvents(&handle);
