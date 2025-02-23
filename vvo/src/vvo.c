@@ -215,7 +215,7 @@ uint8_t vvoCreateDstImage(
 	);
 
 	uint32_t stbi_row_size = p_vvo->src_image_channel_count * 1 * p_vvo->surface_width;//stbi expects 8 bits per channel
-	//p_vvo->p_stbi_image_data = calloc(1, p_vvo->surface_height * stbi_row_size);//maybe no need, stbi automatically allocates mem
+	p_vvo->p_stbi_image_data = calloc(1, p_vvo->surface_height * stbi_row_size);//stbi automatically allocates mem
 
 	return 1;
 }
