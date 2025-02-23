@@ -576,6 +576,7 @@ uint8_t vvoPollEvents(
 	mg_mgr_poll(&p_vvo->event_manager, 1);
 
 	if (p_vvo->p_png_image_data != NULL) {
+		p_vvo->png_image_size = 0;
 		free(p_vvo->p_png_image_data);
 	}
 
